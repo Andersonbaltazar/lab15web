@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${producto.id != null ? 'Editar Producto' : 'Nuevo Producto'}">Producto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar simple -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sistema CRUD</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Inicio</a>
+                <a class="nav-link" href="/categorias">Categorías</a>
+                <a class="nav-link active" href="/productos">Productos</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 th:text="${producto.id != null ? 'Editar Producto' : 'Nuevo Producto'}">Producto</h2>
+        
+        <!-- Alerta si no hay categorías -->
+        <div th:if="${categorias.empty}" class="alert alert-warning">
+            <p>No hay categorías disponibles. Necesitas crear una categoría primero.</p>
+            <a href="/categorias/new" class="btn btn-primary">Crear Categoría</a>
+        </div>
+
+        <!-- Formulario -->
+        <div class="card mt-3" th:unless="${categorias.empty}">
+            <div class="card-body">
+                <form th:action="@{/productos/save}" th:object="${producto}" method="post">
+                    <input type="hidden" th:field="*{id}" />
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <input type="text" th:field="*{nombre}" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="categoria" class="form-label">Categoría:</label>
+                            <select th:field="*{categoria.id}" class="form-select" id="categoria" required>
+                                <option value="">Seleccione una categoría</option>
+                                <option th:each="categoria : ${categorias}" 
+                                        th:value="${categoria.id}" 
+                                        th:text="${categoria.nombre}">Categoría</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio:</label>
+                            <input type="number" th:field="*{precio}" class="form-control" id="precio" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock:</label>
+                            <input type="number" th:field="*{stock}" class="form-control" id="stock" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción:</label>
+                        <textarea th:field="*{descripcion}" class="form-control" id="descripcion" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success" th:text="${producto.id != null ? 'Actualizar' : 'Guardar'}">Guardar</button>
+                        <a href="/productos" class="btn btn-secondary">Cancelar</a>
+                        <a th:if="${producto.id != null}" th:href="@{/productos/delete/{id}(id=${producto.id})}" 
+                           class="btn btn-danger" onclick="return confirm('¿Eliminar este producto?')">Eliminar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+        <!-- Información adicional -->
+        <div class="row mt-4" th:if="${producto.id != null}">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-info-circle"></i> Información del Producto
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>ID:</strong> <span th:text="${producto.id}">-</span></p>
+                                <p><strong>Nombre:</strong> <span th:text="${producto.nombre}">-</span></p>
+                                <p><strong>Categoría:</strong> 
+                                    <span class="badge bg-info" th:text="${producto.categoria?.nombre}">-</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Precio:</strong> 
+                                    <span class="text-success fw-bold">
+                                        $<span th:text="${producto.precio != null ? #numbers.formatDecimal(producto.precio, 1, 2) : '0.00'}">0.00</span>
+                                    </span>
+                                </p>
+                                <p><strong>Stock:</strong> 
+                                    <span th:text="${producto.stock}" 
+                                          th:class="${producto.stock > 10 ? 'badge bg-success' : producto.stock > 0 ? 'badge bg-warning' : 'badge bg-danger'}">0</span>
+                                </p>
+                                <p><strong>Descripción:</strong> <span th:text="${producto.descripcion ?: 'Sin descripción'}">-</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consejos -->
+        <div class="row mt-4" th:unless="${categorias.empty}">
+            <div class="col">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-lightbulb"></i> Consejos:</h6>
+                    <ul class="mb-0">
+                        <li>Todos los campos marcados con (*) son obligatorios</li>
+                        <li>El precio debe ser un valor positivo con hasta 2 decimales</li>
+                        <li>El stock debe ser un número entero positivo</li>
+                        <li>Puedes crear nuevas categorías desde el enlace en el selector</li>
+                        <li>La descripción ayuda a los usuarios a entender mejor el producto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 Sistema CRUD - Lab15. Desarrollado con Spring Boot y Thymeleaf.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small class="text-muted">
+                        <i class="fas fa-code"></i> Tecsup - Laboratorio 15
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmDelete(message) {
+            return confirm(message || '¿Estás seguro de que deseas eliminar este elemento?');
+        }
+
+        // Validación del formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const nombre = document.getElementById('nombre').value.trim();
+            const precio = parseFloat(document.getElementById('precio').value);
+            const stock = parseInt(document.getElementById('stock').value);
+            const categoria = document.getElementById('categoria').value;
+
+            if (!nombre) {
+                e.preventDefault();
+                alert('El nombre del producto es obligatorio');
+                document.getElementById('nombre').focus();
+                return;
+            }
+
+            if (!categoria) {
+                e.preventDefault();
+                alert('Debe seleccionar una categoría');
+                document.getElementById('categoria').focus();
+                return;
+            }
+
+            if (isNaN(precio) || precio < 0) {
+                e.preventDefault();
+                alert('El precio debe ser un valor positivo');
+                document.getElementById('precio').focus();
+                return;
+            }
+
+            if (isNaN(stock) || stock < 0) {
+                e.preventDefault();
+                alert('El stock debe ser un número positivo');
+                document.getElementById('stock').focus();
+                return;
+            }
+        });
+
+        // Formatear precio mientras se escribe
+        document.getElementById('precio').addEventListener('input', function() {
+            let value = this.value;
+            if (value && !isNaN(value)) {
+                // Limitar a 2 decimales
+                if (value.includes('.')) {
+                    let parts = value.split('.');
+                    if (parts[1] && parts[1].length > 2) {
+                        this.value = parts[0] + '.' + parts[1].substring(0, 2);
+                    }
+                }
+            }
+        });
+
+        // Indicador de stock
+        document.getElementById('stock').addEventListener('input', function() {
+            const stock = parseInt(this.value);
+            const indicator = document.getElementById('stock-indicator');
+            
+            if (indicator) {
+                indicator.remove();
+            }
+
+            if (!isNaN(stock)) {
+                const newIndicator = document.createElement('div');
+                newIndicator.id = 'stock-indicator';
+                newIndicator.className = 'form-text';
+                
+                if (stock === 0) {
+                    newIndicator.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> Sin stock</span>';
+                } else if (stock < 10) {
+                    newIndicator.innerHTML = '<span class="text-warning"><i class="fas fa-exclamation-circle"></i> Stock bajo</span>';
+                } else {
+                    newIndicator.innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> Stock suficiente</span>';
+                }
+                
+                this.parentNode.appendChild(newIndicator);
+            }
+        });
+    </script>
+</body>
+</html>

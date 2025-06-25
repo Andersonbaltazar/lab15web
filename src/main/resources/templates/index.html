@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar simple -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sistema CRUD</a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="/">Inicio</a>
+                <a class="nav-link" href="/categorias">Categorías</a>
+                <a class="nav-link" href="/productos">Productos</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h1>Sistema CRUD de Productos y Categorías</h1>
+            <p class="lead">Gestiona tu inventario de manera sencilla</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3>Categorías</h3>
+                        <p>Organiza tus productos en categorías</p>
+                        <a href="/categorias" class="btn btn-primary">Gestionar Categorías</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3>Productos</h3>
+                        <p>Administra tu inventario de productos</p>
+                        <a href="/productos" class="btn btn-success">Gestionar Productos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col text-center">
+                <h4>API REST</h4>
+                <p>También puedes acceder a los datos mediante API REST:</p>
+                <a href="/api/categorias" target="_blank" class="btn btn-outline-primary">API Categorías</a>
+                <a href="/api/productos" target="_blank" class="btn btn-outline-success">API Productos</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
